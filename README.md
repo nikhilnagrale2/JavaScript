@@ -1785,6 +1785,158 @@ planesInLine(12);
 
 ## Closer Look at Functions
 
+### Default Parameters
+
+```js
+// Default Parameters
+const bookings = [];
+
+const createBooking = function (
+  flightNum,
+  numPassengers = 1,
+  price = 199 * numPassengers
+) {
+  // ES5
+  // numPassengers = numPassengers || 1;
+  // price = price || 199;
+
+  const booking = {
+    flightNum,
+    numPassengers,
+    price,
+  };
+  console.log(booking);
+  bookings.push(booking);
+};
+
+createBooking("LH123");
+createBooking("LH123", 2, 800);
+createBooking("LH123", 2);
+createBooking("LH123", 5);
+
+createBooking("LH123", undefined, 1000);
+```
+
+---
+
+### How Passing Arguments Works: Value vs. References
+
+```js
+// How Passing Arguments Works: Values vs. Reference
+const flight = "LH234";
+const jonas = {
+  name: "Jonas Schmedtmann",
+  passport: 24739479284,
+};
+
+const checkIn = function (flightNum, passenger) {
+  flightNum = "LH999";
+  passenger.name = "Mr. " + passenger.name;
+
+  if (passenger.passport === 24739479284) {
+    alert("Checked in");
+  } else {
+    alert("Wrong passport!");
+  }
+};
+
+// checkIn(flight, jonas);
+// console.log(flight); // not changed
+// console.log(jonas);  // changed
+
+// Is the same as doing...
+// const flightNum = flight;
+// const passenger = jonas;
+
+const newPassport = function (person) {
+  person.passport = Math.trunc(Math.random() * 100000000000);
+};
+
+newPassport(jonas);
+checkIn(flight, jonas);
+```
+
+- JavaScript does not have pass by reference.
+
+---
+
+### First Class Function and Higher Order Functions
+
+| First Class Functions                               | Higher Order Functions                                                                                                        |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| JavaScript treats functions as first-class citizens | A function that receives another function as an argument that returns a new function or both                                  |
+| This means that functions are simply values         | This is only possible because of first class functions                                                                        |
+| Functions are just another 'type' of object         | 1) Fuction that receives another function. Ex- addEventListner is higher order function since it receives a callback function |
+| store functions in variables or properties          | 2) function that returns a new function                                                                                       |
+| pass function as arguments to other functions       |                                                                                                                               |
+| return functions from functions                     |                                                                                                                               |
+| call methods on functions                           |                                                                                                                               |
+
+---
+
+### Functions Accepting Callback Functions
+
+```js
+// Functions Accepting Callback Functions
+const oneWord = function (str) {
+  return str.replace(/ /g, "").toLowerCase();
+};
+
+const upperFirstWord = function (str) {
+  const [first, ...others] = str.split(" ");
+  return [first.toUpperCase(), ...others].join(" ");
+};
+
+// Higher-order function
+const transformer = function (str, fn) {
+  console.log(`Original string: ${str}`);
+  console.log(`Transformed string: ${fn(str)}`);
+
+  console.log(`Transformed by: ${fn.name}`); // function property
+};
+
+transformer("JavaScript is the best!", upperFirstWord);
+transformer("JavaScript is the best!", oneWord);
+
+// JS uses callbacks all the time
+const high5 = function () {
+  console.log("👋");
+};
+document.body.addEventListener("click", high5);
+["Jonas", "Martha", "Adam"].forEach(high5);
+```
+
+- Javascript allows us to create abstraction.
+
+---
+
+### Functions returning Function
+
+```js
+// Functions Returning Functions
+const greet = function (greeting) {
+  return function (name) {
+    console.log(`${greeting} ${name}`);
+  };
+};
+
+const greeterHey = greet("Hey");
+greeterHey("Jonas");
+greeterHey("Steven");
+
+greet("Hello")("Jonas");
+
+// Challenge
+const greetArr = (greeting) => (name) => console.log(`${greeting} ${name}`);
+greetArr("Hi")("Jonas");
+```
+
+- Important in functional programming paradigm.
+
+---
+
+### The Call and Apply Method
+
 ---
 
 ---
@@ -1797,4 +1949,4 @@ planesInLine(12);
 
 ## Working With Arrays
 
-### Arrays are Also Objects
+- Arrays are Also Objects
