@@ -2043,6 +2043,111 @@ console.log(addVAT2(23));
 
 ---
 
+### Immediately Invoked Function Expression
+
+```js
+// Immediately Invoked Function Expressions (IIFE)
+const runOnce = function () {
+  console.log("This will never run again");
+};
+runOnce();
+
+// IIFE
+(function () {
+  console.log("This will never run again");
+  const isPrivate = 23;
+})();
+
+// console.log(isPrivate);
+
+(() => console.log("This will ALSO never run again"))();
+
+{
+  const isPrivate = 23;
+  var notPrivate = 46;
+}
+// console.log(isPrivate);
+console.log(notPrivate);
+```
+
+---
+
+### Closures
+
+- A function has access to the variable environment (VE) of the execution context in which it was created.
+- Closure: VE attached to the function, exactly as it was at the time and place the function was created.
+- A closure is the closed-over variable environment of the execution context in which a function was created, even after that execution is gone.
+- (Less Formal): A closure gives a function access to all the variables of its parent function, even after that parent function has returned. The function keeps a reference to its outer scope, which preserves the scope chain throughout time.
+- (Less Formal): A closure makes sure that a function doesn't loose connection to variables that existed at the function's birth place.
+- (Less formal): A closure is like a backpack that a function carries around wherever it goes. This backpack has all the variables that were present in the environment where the function was created.
+- we do not have to manually create closures, this is a javascript feature that happens automatically, we can't even access closed-over variables explicitly. A closure is not a tangible JavaScript object.
+
+```js
+// Closures
+const secureBooking = function () {
+  let passengerCount = 0;
+
+  return function () {
+    passengerCount++;
+    console.log(`${passengerCount} passengers`);
+  };
+};
+
+const booker = secureBooking();
+
+booker();
+booker();
+booker();
+
+console.dir(booker);
+```
+
+```js
+// More Closure Examples
+// Example 1
+let f;
+
+const g = function () {
+  const a = 23;
+  f = function () {
+    console.log(a * 2);
+  };
+};
+
+const h = function () {
+  const b = 777;
+  f = function () {
+    console.log(b * 2);
+  };
+};
+
+g();
+f();
+console.dir(f);
+
+// Re-assigning f function
+h();
+f();
+console.dir(f);
+
+// Example 2
+const boardPassengers = function (n, wait) {
+  const perGroup = n / 3;
+
+  setTimeout(function () {
+    console.log(`We are now boarding all ${n} passengers`);
+    console.log(`There are 3 groups, each with ${perGroup} passengers`);
+  }, wait * 1000);
+
+  console.log(`Will start boarding in ${wait} seconds`);
+};
+
+const perGroup = 1000; // closure have higer priority over scope chain
+boardPassengers(180, 3);
+```
+
+---
+
 ---
 
 ---
