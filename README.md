@@ -2807,3 +2807,322 @@ setInterval(function () {
   console.log(now);
 }, 1000);
 ```
+
+---
+
+---
+
+---
+
+---
+
+---
+
+## Advanced DOM and Events
+
+### What is DOM
+
+![What is DOM](https://i.ibb.co/Sw0Qssp/image.png)
+
+![How DOM API is organized](https://i.ibb.co/xj2MFTN/image.png)
+
+### Selecting, Creating and Deleting Elements
+
+```js
+// Selecting, Creating, and Deleting Elements
+
+// Selecting elements
+console.log(document.documentElement);
+console.log(document.head);
+console.log(document.body);
+
+const header = document.querySelector(".header");
+const allSections = document.querySelectorAll(".section");
+console.log(allSections);
+//  this is not updated whenever you change
+
+document.getElementById("section--1");
+const allButtons = document.getElementsByTagName("button");
+console.log(allButtons);
+//  these gets updated at that instance
+
+// Try to delete one of elements and then check again allsections and allbuttons
+
+console.log(document.getElementsByClassName("btn"));
+
+// Creating and inserting elements
+const message = document.createElement("div");
+
+message.classList.add("cookie-message");
+//   for text only
+message.textContent =
+  "We use cookied for improved functionality and analytics.";
+//  for html as well
+message.innerHTML =
+  'We use cookied for improved functionality and analytics. <button class="btn btn--close-cookie">Got it!</button>';
+
+//   only one child can be there either of them
+// header.prepend(message);
+header.append(message);
+
+//  But if you want to have it both places
+// header.append(message.cloneNode(true));
+
+//  Element to add before and after element
+// header.before(message);
+// header.after(message);
+
+// .insertAdjacentHTML
+
+// Delete elements
+document
+  .querySelector(".btn--close-cookie")
+  .addEventListener("click", function () {
+    // message.remove();  //newer method
+    message.parentElement.removeChild(message); //older method
+  });
+```
+
+---
+
+### Styles, Attributes and Classes
+
+```js
+// Styles, Attributes and Classes
+
+// Styles
+message.style.backgroundColor = "#37383d";
+message.style.width = "120%";
+
+console.log(message.style.color);
+console.log(message.style.backgroundColor);
+
+//  Access All styles of element
+console.log(getComputedStyle(message).color);
+console.log(getComputedStyle(message).height);
+
+message.style.height =
+  Number.parseFloat(getComputedStyle(message).height, 10) + 30 + "px";
+
+document.documentElement.style.setProperty("--color-primary", "orangered");
+
+// Attributes
+const logo = document.querySelector(".nav__logo");
+console.log(logo.alt);
+console.log(logo.className);
+
+logo.alt = "Beautiful minimalist logo";
+
+// Non-standard
+console.log(logo.designer); // doesn't work
+console.log(logo.getAttribute("designer")); // it works
+
+logo.setAttribute("company", "Bankist");
+
+console.log(logo.src); // different
+console.log(logo.getAttribute("src")); //different
+
+const link = document.querySelector(".nav__link--btn");
+console.log(link.href);
+console.log(link.getAttribute("href"));
+
+// Data attributes
+console.log(logo.dataset.versionNumber);
+//   it should be camelcase in js but while assigning to element in html it should be data-version-number
+
+// Classes
+logo.classList.add("c", "j");
+logo.classList.remove("c", "j");
+logo.classList.toggle("c");
+logo.classList.contains("c"); // not includes
+
+// Don't use
+logo.clasName = "jonas";
+```
+
+---
+
+### How to Add Smooth Scrolling
+
+```js
+const btnScrollTo = document.querySelector(".btn--scroll-to");
+const section1 = document.querySelector("#section--1");
+btnScrollTo.addEventListener("click", function (e) {
+  section1.scrollIntoView({ behavior: "smooth" });
+});
+```
+
+---
+
+### Types of Events and EventListner
+
+```js
+///////////////////////////////////////
+// Types of Events and Event Handlers
+const h1 = document.querySelector("h1");
+
+const alertH1 = function (e) {
+  alert("addEventListener: Great! You are reading the heading :D");
+};
+
+h1.addEventListener("mouseenter", alertH1);
+
+setTimeout(() => h1.removeEventListener("mouseenter", alertH1), 3000);
+
+// h1.onmouseenter = function (e) {
+//   alert('onmouseenter: Great! You are reading the heading :D');
+// };
+```
+
+---
+
+### Events Propagation Bubbling and Capturing
+
+![Bubbling and Capturing](https://i.ibb.co/qNsXppF/image.png)
+
+```js
+///////////////////////////////////////
+// Event Propagation in Practice
+const randomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1) + min);
+const randomColor = () =>
+  `rgb(${randomInt(0, 255)},${randomInt(0, 255)},${randomInt(0, 255)})`;
+
+document.querySelector(".nav__link").addEventListener("click", function (e) {
+  this.style.backgroundColor = randomColor();
+  console.log("LINK", e.target, e.currentTarget);
+  console.log(e.currentTarget === this);
+
+  // Stop propagation
+  // e.stopPropagation();
+});
+
+document.querySelector(".nav__links").addEventListener("click", function (e) {
+  this.style.backgroundColor = randomColor();
+  console.log("CONTAINER", e.target, e.currentTarget);
+});
+
+document.querySelector(".nav").addEventListener("click", function (e) {
+  this.style.backgroundColor = randomColor();
+  console.log("NAV", e.target, e.currentTarget);
+});
+```
+
+---
+
+### Event Delegation
+
+```js
+// 1. Add event listener to common parent element
+// 2. Determine what element originated the event
+
+document.querySelector(".nav__links").addEventListener("click", function (e) {
+  e.preventDefault();
+
+  // Matching strategy
+  if (e.target.classList.contains("nav__link")) {
+    const id = e.target.getAttribute("href");
+    document.querySelector(id).scrollIntoView({ behavior: "smooth" });
+  }
+});
+```
+
+---
+
+### DOM traversing
+
+```js
+///////////////////////////////////////
+// DOM Traversing
+const h1 = document.querySelector("h1");
+
+// Going downwards: child
+console.log(h1.querySelectorAll(".highlight"));
+console.log(h1.childNodes);
+console.log(h1.children);
+h1.firstElementChild.style.color = "white";
+h1.lastElementChild.style.color = "orangered";
+
+// Going upwards: parents
+console.log(h1.parentNode);
+console.log(h1.parentElement);
+
+h1.closest(".header").style.background = "var(--gradient-secondary)";
+
+h1.closest("h1").style.background = "var(--gradient-primary)";
+
+// Going sideways: siblings
+console.log(h1.previousElementSibling);
+console.log(h1.nextElementSibling);
+
+console.log(h1.previousSibling);
+console.log(h1.nextSibling);
+
+console.log(h1.parentElement.children);
+[...h1.parentElement.children].forEach(function (el) {
+  if (el !== h1) el.style.transform = "scale(0.5)";
+});
+```
+
+---
+
+### Sticky navigation
+
+```js
+///////////////////////////////////////
+// Sticky navigation
+const initialCoords = section1.getBoundingClientRect();
+console.log(initialCoords);
+
+window.addEventListener("scroll", function () {
+  console.log(window.scrollY);
+
+  if (window.scrollY > initialCoords.top) nav.classList.add("sticky");
+  else nav.classList.remove("sticky");
+});
+```
+
+---
+
+### Sticky Navigation : Intersection Observer API
+
+```js
+///////////////////////////////////////
+// Sticky navigation: Intersection Observer API
+
+const obsCallback = function (entries, observer) {
+  entries.forEach((entry) => {
+    console.log(entry);
+  });
+};
+
+const obsOptions = {
+  root: null,
+  threshold: [0, 0.2],
+};
+
+const observer = new IntersectionObserver(obsCallback, obsOptions);
+observer.observe(section1);
+```
+
+---
+
+### Lifecycle DOM Events
+
+```js
+///////////////////////////////////////
+// Lifecycle DOM Events
+document.addEventListener("DOMContentLoaded", function (e) {
+  console.log("HTML parsed and DOM tree built!", e);
+});
+
+window.addEventListener("load", function (e) {
+  console.log("Page fully loaded", e);
+});
+
+window.addEventListener("beforeunload", function (e) {
+  e.preventDefault();
+  console.log(e);
+  e.returnValue = "";
+});
+```
